@@ -3,7 +3,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
-FROM python:3.12-slim
+FROM python:3.14-slim
 RUN useradd --create-home appuser
 WORKDIR /app
 COPY --from=builder /root/.local /home/appuser/.local
