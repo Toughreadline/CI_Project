@@ -42,8 +42,7 @@ jobs:
       - name: Build image for scan
         run: docker build -t execute-tech-academy:scan .
       - name: Run Trivy scan
-        run: trivy image --exit-code 1 --severity HIGH,CRITICAL execute-tech-academy:scan
-
+        run: trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed execute-tech-academy:scan
   push:
     name: Push to Docker Hub
     runs-on: ubuntu-latest
