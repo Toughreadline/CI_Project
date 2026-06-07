@@ -37,7 +37,7 @@ jobs:
         run: |
           sudo apt-get install -y wget apt-transport-https gnupg
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo "deb https://aquasecurity.github.io/trivy-repo/deb generic staging" | sudo tec /etc/apt/sources.list.d/trivy.list
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb generic staging" | sudo tee /etc/apt/sources.list.d/trivy.list
           sudo apt-get update && sudo apt-get install -y trivy
       - name: Build image for scan
         run: docker build -t execute-tech-academy:scan .
