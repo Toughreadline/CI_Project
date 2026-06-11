@@ -103,10 +103,19 @@ jobs:
           image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
 
       - name: Deploy to Amazon ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2   # ← Changed to v2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ci-project-task-service-vahgaisq
           cluster: ci-project_cluster
-          wait-for-service-stability: true
+          wait-for-service-stability: false
           force-new-deployment: true
+
+      - name: Check service status
+        if: always()
+        run: |
+          aws ecs describe-services \
+            --cluster ci-project_cluster \
+            --services ci-project-task-service-vahgaisq \
+            --query "services[0].{status:status, runningCount:runningCount, pendingCount:pendingCount, desiredCount:desiredCount}" \
+            --output yaml
