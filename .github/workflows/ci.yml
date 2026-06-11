@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [staging, muyiwa]
+    branches: [staging, temi muyiwa]
   pull_request:
     branches: [staging]
 
