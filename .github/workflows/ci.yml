@@ -99,11 +99,11 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: "ci-project-container"     # ← Correct container name
+          container-name: "ci-project-container"
           image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
 
       - name: Deploy to Amazon ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2   # ← Changed to v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ci-project-task-service-vahgaisq
