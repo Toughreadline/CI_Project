@@ -8,6 +8,7 @@ RUN useradd --create-home appuser
 WORKDIR /app
 COPY --from=builder /root/.local /home/appuser/.local
 COPY --chown=appuser:appuser . .
+RUN mkdir -p /tmp && chmod 1777 /tmp
 USER appuser
 ENV PATH=/home/appuser/.local/bin:$PATH
 EXPOSE 5000

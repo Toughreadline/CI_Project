@@ -105,7 +105,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ci-project-task-service-vahgaisq
+          service: ci-project-task-service-dwusgl2r 
           cluster: ci-project_cluster
           wait-for-service-stability: true
           force-new-deployment: true
@@ -115,6 +115,6 @@ jobs:
         run: |
           aws ecs describe-services \
             --cluster ci-project_cluster \
-            --services ci-project-task-service-vahgaisq \
+            --services ci-project-task-service-dwusgl2r \
             --query "services[0].{status:status, runningCount:runningCount, pendingCount:pendingCount, desiredCount:desiredCount}" \
             --output yaml
