@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [staging, temp]
+    branches: [main, staging, Nenny]
   pull_request:
     branches: [staging]
 
@@ -56,7 +56,7 @@ jobs:
     name: Push to ECR and Deploy to ECS
     runs-on: ubuntu-latest
     needs: scan
-    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/temp'
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/Nenny'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -70,7 +70,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Log in to Amazon ECR
         id: login-ecr
@@ -87,7 +87,7 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition ci-project-task \
+            --task-definition ci-cd-project_task \
             --query taskDefinition \
             --output json | \
             jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' \
@@ -98,15 +98,15 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: "ci-project-container"
+          container-name: "ci-cd-project_container"
           image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
 
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ci-project-task-service-vahgaisq
-          cluster: ci-project_cluster
+          service: ci-cd-project_service
+          cluster: ci-cd-project_cluster
           wait-for-service-stability: true
           force-new-deployment: true
 
@@ -114,7 +114,7 @@ jobs:
         if: always()
         run: |
           aws ecs describe-services \
-            --cluster ci-project_cluster \
-            --services ci-project-task-service-vahgaisq \
+            --cluster ci-cd-project_cluster \
+            --services ci-cd-project_service \
             --query "services[0].{status:status, runningCount:runningCount, pendingCount:pendingCount, desiredCount:desiredCount}" \
             --output yaml
